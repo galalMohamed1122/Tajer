@@ -1,0 +1,30 @@
+// Tajer ERD v0. Paste into https://dbdiagram.io/d
+// One schema per module. Tables in DIFFERENT modules reference each other by Id only,
+// with no foreign key across modules (each module owns its tables).
+
+Table catalog.products {
+  id uniqueidentifier [pk]
+  vendor_id uniqueidentifier [not null, note: 'Identity module. Id only, no FK']
+  category_id uniqueidentifier
+  name nvarchar(200) [not null]
+  description nvarchar(max)
+  created_at datetime2 [not null]
+}
+
+Table catalog.variants {
+  id uniqueidentifier [pk]
+  product_id uniqueidentifier [not null, ref: > catalog.products.id]
+  sku varchar(64) [not null, unique]
+  color nvarchar(50)
+  size nvarchar(20)
+  price_minor bigint [not null, note: 'Money in minor units (piasters), never decimal or double']
+  currency char(3) [not null]
+}
+
+// ---- Your part. Answer the questions in the guide while you add these ----
+// catalog.categories
+// inventory.warehouses      (a vendor's store or branch)
+// inventory.stock_items     (one row per what? which column stops two buyers taking the last item?)
+// inventory.reservations    (what does it point to? when does it expire? what are its states?)
+// ordering.carts, ordering.cart_items
+// ordering.orders, ordering.sub_orders (one per vendor), ordering.order_lines
